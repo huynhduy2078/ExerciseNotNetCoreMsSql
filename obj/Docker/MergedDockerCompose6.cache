@@ -1,0 +1,22 @@
+services:
+  exerciseone:
+    build:
+      context: E:\Hoc\.net\src\ExerciseOne
+      dockerfile: ExerciseOne/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    image: exerciseone
+    ports:
+    - published: 8080
+      target: 80
+    - target: 80
+  ms-sql-server:
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Express
+      SA_PASSWORD: Password123
+    image: mcr.microsoft.com/mssql/server:2017-latest-ubuntu
+    ports:
+    - published: 1433
+      target: 1433
+version: '3.4'
