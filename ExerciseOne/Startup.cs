@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +11,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ExerciseOne.Models;
 using Microsoft.EntityFrameworkCore;
+using FirstTest.Extensions;
+using Microsoft.AspNetCore.Http;
 
 namespace ExerciseOne
 {
@@ -26,6 +28,7 @@ namespace ExerciseOne
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
             var server = Configuration["DBServer"] ?? "ms-sql-server";
             var port = Configuration["DBPort"] ?? "1433";
             var user = Configuration["DBUser"] ?? "SA";
@@ -34,15 +37,16 @@ namespace ExerciseOne
 
             services.AddDbContext<ProductContext>(options =>
                 options.UseSqlServer($"Server={server},{port};Initial Catalog={database};User ID={user};Password={password}"));
+            services.Configure<ConfigIp>(Configuration.GetSection("IpAccept"));
             services.AddMvc(option => option.EnableEndpointRouting = false)
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            app.UseMvc();
+        {   
 
+            app.UseMvc();
             PrepDB.PrepPopulation(app);
         }
     }

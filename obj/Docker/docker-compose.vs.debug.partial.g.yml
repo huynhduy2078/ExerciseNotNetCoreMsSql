@@ -10,19 +10,19 @@ services:
         com.microsoft.visual-studio.project-name: "ExerciseOne"
     environment:
       - DOTNET_USE_POLLING_FILE_WATCHER=1
-      - NUGET_PACKAGES=C:\.nuget\packages
-      #- NUGET_FALLBACK_PACKAGES=$container_paths_to_fallback_packages_exerciseone$
+      - NUGET_FALLBACK_PACKAGES=
     volumes:
-      - E:\Hoc\.net\src\ExerciseOne\ExerciseOne:C:\app
-      - E:\Hoc\.net\src\ExerciseOne:C:\src
-      - C:\Users\DH\onecoremsvsmon:C:\remote_debugger:ro
-#$nuget_volume_mapping_exerciseone$
-      - ${APPDATA}/ASP.NET/Https:C:\Users\ContainerUser\AppData\Roaming\ASP.NET\Https:ro
-      - ${APPDATA}/Microsoft/UserSecrets:C:\Users\ContainerUser\AppData\Roaming\Microsoft\UserSecrets:ro
+      - E:\Hoc\.net\src\ExerciseOne\ExerciseOne:/app
+      - E:\Hoc\.net\src\ExerciseOne:/src
+      - C:\Users\DH\vsdbg\vs2017u5:/remote_debugger:rw
+      - C:\Users\DH\.nuget\packages\:/root/.nuget/packages:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
 
-    entrypoint: C:\\remote_debugger\\x64\\msvsmon.exe /noauth /anyuser /silent /nostatus /noclrwarn /nosecuritywarn /nofirewallwarn /nowowwarn /timeout:2147483646 
+    entrypoint: tail -f /dev/null
     labels:
-      com.microsoft.visualstudio.debuggee.program: "\"C:\\Program Files\\dotnet\\dotnet.exe\""
-      #com.microsoft.visualstudio.debuggee.arguments: " $debuggee_arguments_probing_paths_exerciseone$ \"bin\\Debug\\netcoreapp3.0\\ExerciseOne.dll\""
-      com.microsoft.visualstudio.debuggee.workingdirectory: "C:\\app"
-      com.microsoft.visualstudio.debuggee.killprogram: "C:\\remote_debugger\\x64\\utils\\KillProcess.exe dotnet.exe"
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /root/.nuget/packages  \"bin/Debug/netcoreapp3.0/ExerciseOne.dll\""
+      com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      com.microsoft.visualstudio.debuggee.killprogram: "/bin/sh -c \"if PID=$$(pidof dotnet); then kill $$PID; fi\""
+    tty: true
